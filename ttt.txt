@@ -18,5 +18,9 @@ eaeaweaadad
 >>>>>>> feature
 testtesttesttest
 
+<<<<<<< HEAD
 test3
 test4
+=======
+test
+>>>>>>> c0e1a36 (test)
