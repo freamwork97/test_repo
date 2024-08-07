@@ -12,4 +12,9 @@ br11
 ttttt
 addadadd
 >>>>>>> Stashed changes
+<<<<<<< HEAD
 eeaaccdsfafasfadsaad
+=======
+weewW
+eaeaweaadad
+>>>>>>> feature
