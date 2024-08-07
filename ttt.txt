@@ -21,6 +21,7 @@ testtesttesttest
 <<<<<<< HEAD
 test3
 test4
+<<<<<<< HEAD
 =======
 test
 <<<<<<< HEAD
@@ -28,3 +29,5 @@ test
 =======
 test2
 >>>>>>> d01f39d (test2)
+=======
+>>>>>>> c93d434 (test4)
