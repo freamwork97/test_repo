@@ -1,11 +1,3 @@
 a
-<<<<<<< HEAD
 aa
-<<<<<<< HEAD
-=======
 aaa
-aaaa
->>>>>>> parent of 65ed65e (Revert "aaa")
-=======
-
->>>>>>> parent of 03507a4 (test)
