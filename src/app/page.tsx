@@ -13,6 +13,7 @@ export default function Home() {
     const [gameOver, setGameOver] = useState(false);
     const [gameMode, setGameMode] = useState<GameMode>(null);
     const [statusMessage, setStatusMessage] = useState('');
+    const [lastMove, setLastMove] = useState<{ row: number, col: number } | null>(null);
 
     useEffect(() => {
         if (gameMode) {
@@ -38,6 +39,7 @@ export default function Home() {
         setCurrentPlayer('black');
         setGameOver(false);
         setStatusMessage('현재 플레이어: 흑');
+        setLastMove(null);
     };
 
     const handleCellClick = (row: number, col: number) => {
@@ -51,6 +53,7 @@ export default function Home() {
         const newBoard = board.map(r => [...r]);
         newBoard[row][col] = player;
         setBoard(newBoard);
+        setLastMove({ row, col });
 
         if (checkWin(newBoard, row, col)) {
             setStatusMessage(`${player === 'black' ? '흑' : '백'} 승리!`);
@@ -307,7 +310,7 @@ export default function Home() {
                             row.map((cell, colIndex) => (
                                 <div
                                     key={`${rowIndex}-${colIndex}`}
-                                    className={`cell ${cell ? cell : ''}`}
+                                    className={`cell ${cell ? cell : ''} ${lastMove && lastMove.row === rowIndex && lastMove.col === colIndex ? 'last-move' : ''}`}
                                     onClick={() => handleCellClick(rowIndex, colIndex)}
                                 />
                             ))
