@@ -152,7 +152,14 @@ export default function Home() {
             return;
         }
     
-        // 7. Play a random move
+        // 7. Play a move near the opponent's stones
+        bestMove = findRandomNearbyCell(board);
+        if (bestMove) {
+            placeStone(bestMove.row, bestMove.col, aiPlayer);
+            return;
+        }
+
+        // 8. As a last resort, play any random empty cell
         bestMove = findRandomEmptyCell(board);
         if (bestMove) {
             placeStone(bestMove.row, bestMove.col, aiPlayer);
@@ -226,6 +233,42 @@ export default function Home() {
             if (targetCount === 3 && currentCount === 3 && openEnds === 2) return true;
         }
         return false;
+    };
+
+    const findRandomNearbyCell = (currentBoard: (Player | null)[][]): { row: number, col: number } | null => {
+        const humanPlayer = 'black';
+        const nearbyEmptyCells = new Set<string>();
+    
+        for (let r = 0; r < BOARD_SIZE; r++) {
+            for (let c = 0; c < BOARD_SIZE; c++) {
+                if (currentBoard[r][c] === humanPlayer) {
+                    // Check 8 neighbors
+                    for (let dr = -1; dr <= 1; dr++) {
+                        for (let dc = -1; dc <= 1; dc++) {
+                            if (dr === 0 && dc === 0) continue;
+    
+                            const nr = r + dr;
+                            const nc = c + dc;
+    
+                            if (nr >= 0 && nr < BOARD_SIZE && nc >= 0 && nc < BOARD_SIZE && currentBoard[nr][nc] === null) {
+                                nearbyEmptyCells.add(`${nr},${nc}`);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    
+        if (nearbyEmptyCells.size > 0) {
+            const emptyCellsArray = Array.from(nearbyEmptyCells).map(s => {
+                const [row, col] = s.split(',').map(Number);
+                return { row, col };
+            });
+            const randomIndex = Math.floor(Math.random() * emptyCellsArray.length);
+            return emptyCellsArray[randomIndex];
+        }
+    
+        return null;
     };
     
     const findRandomEmptyCell = (currentBoard: (Player | null)[][]): { row: number, col: number } | null => {
