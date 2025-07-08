@@ -93,7 +93,7 @@ export default function Home() {
                     break;
                 }
             }
-            if (count >= 5) return true;
+            if (count === 5) return true;
         }
         return false;
     };
