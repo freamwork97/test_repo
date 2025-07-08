@@ -14,12 +14,13 @@ export default function Home() {
     const [gameMode, setGameMode] = useState<GameMode>(null);
     const [statusMessage, setStatusMessage] = useState('');
     const [lastMove, setLastMove] = useState<{ row: number, col: number } | null>(null);
+    const [renjuRule, setRenjuRule] = useState(true);
 
     useEffect(() => {
         if (gameMode) {
             initializeBoard();
         }
-    }, [gameMode]);
+    }, [gameMode, renjuRule]);
 
     useEffect(() => {
         if (gameOver) return;
@@ -45,6 +46,13 @@ export default function Home() {
     const handleCellClick = (row: number, col: number) => {
         if (gameOver || board[row][col] !== null) return;
         if (gameMode === 'ai' && currentPlayer === 'white') return;
+
+        if (renjuRule && currentPlayer === 'black') {
+            if (isForbiddenMove(board, row, col, 'black')) {
+                setStatusMessage('금수입니다! 다른 곳에 두세요.');
+                return;
+            }
+        }
 
         placeStone(row, col, currentPlayer);
     };
@@ -78,7 +86,8 @@ export default function Home() {
 
         for (const [dr, dc] of directions) {
             let count = 1;
-            for (let i = 1; i < 5; i++) {
+            // 한 방향으로 개수 세기
+            for (let i = 1; i < BOARD_SIZE; i++) {
                 const r = row + dr * i;
                 const c = col + dc * i;
                 if (r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE && currentBoard[r][c] === player) {
@@ -87,7 +96,8 @@ export default function Home() {
                     break;
                 }
             }
-            for (let i = 1; i < 5; i++) {
+            // 반대 방향으로 개수 세기
+            for (let i = 1; i < BOARD_SIZE; i++) {
                 const r = row - dr * i;
                 const c = col - dc * i;
                 if (r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE && currentBoard[r][c] === player) {
@@ -96,9 +106,92 @@ export default function Home() {
                     break;
                 }
             }
-            if (count === 5) return true;
+
+            // 승리 조건 확인
+            if (count === 5) {
+                return true; // 5목은 항상 승리입니다.
+            }
+            if (count > 5) {
+                // 렌주룰이 켜져 있을 때, 백돌만 6목 이상으로 승리할 수 있습니다.
+                if (renjuRule && player === 'white') {
+                    return true;
+                }
+                // 그 외의 경우(렌주룰이 꺼져 있거나, 흑돌인 경우) 6목 이상은 승리가 아닙니다.
+            }
         }
         return false;
+    };
+
+    const isForbiddenMove = (currentBoard: (Player | null)[][], row: number, col: number, player: Player): boolean => {
+        if (player !== 'black') return false;
+
+        const tempBoard = currentBoard.map(r => [...r]);
+        tempBoard[row][col] = player;
+
+        // 6목 이상 (장목) 체크
+        const directions = [[0, 1], [1, 0], [1, 1], [1, -1]];
+        for (const [dr, dc] of directions) {
+            let count = 1;
+            for (let i = 1; i < 6; i++) {
+                const r = row + dr * i;
+                const c = col + dc * i;
+                if (r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE && tempBoard[r][c] === player) count++;
+                else break;
+            }
+            for (let i = 1; i < 6; i++) {
+                const r = row - dr * i;
+                const c = col - dc * i;
+                if (r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE && tempBoard[r][c] === player) count++;
+                else break;
+            }
+            if (count > 5) return true;
+        }
+
+        // 3-3, 4-4 체크
+        let openThrees = 0;
+        let openFours = 0;
+        for (const [dr, dc] of directions) {
+            const result = isOpen(tempBoard, row, col, player, dr, dc);
+            if (result === 3) openThrees++;
+            if (result === 4) openFours++;
+        }
+
+        if (openThrees >= 2) return true;
+        if (openFours >= 2) return true;
+
+        return false;
+    };
+
+    const isOpen = (currentBoard: (Player | null)[][], row: number, col: number, player: Player, dr: number, dc: number): number => {
+        let count = 1;
+        let openEnds = 0;
+
+        // 한 방향
+        let r = row + dr;
+        let c = col + dc;
+        while (r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE && currentBoard[r][c] === player) {
+            count++;
+            r += dr;
+            c += dc;
+        }
+        if (r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE && currentBoard[r][c] === null) {
+            openEnds++;
+        }
+
+        // 반대 방향
+        r = row - dr;
+        c = col - dc;
+        while (r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE && currentBoard[r][c] === player) {
+            count++;
+            r -= dr;
+            c -= dc;
+        }
+        if (r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE && currentBoard[r][c] === null) {
+            openEnds++;
+        }
+
+        if (openEnds === 2) return count;
+        return 0;
     };
 
     const isBoardFull = (currentBoard: (Player | null)[][]): boolean => {
@@ -188,6 +281,9 @@ export default function Home() {
         for (let r = 0; r < BOARD_SIZE; r++) {
             for (let c = 0; c < BOARD_SIZE; c++) {
                 if (currentBoard[r][c] === null) {
+                    if (player === 'black' && renjuRule && isForbiddenMove(currentBoard, r, c, 'black')) {
+                        continue;
+                    }
                     const tempBoard = currentBoard.map(row => [...row]);
                     tempBoard[r][c] = player;
                     if (checkLineForThreat(tempBoard, r, c, player, targetCount)) {
@@ -299,6 +395,16 @@ export default function Home() {
                     <h2>게임 모드 선택</h2>
                     <button onClick={() => startGame('ai')}>플레이어 vs AI</button>
                     <button onClick={() => startGame('human')}>플레이어 vs 플레이어</button>
+                    <div className="rule-selection">
+                        <label>
+                            <input
+                                type="checkbox"
+                                checked={renjuRule}
+                                onChange={() => setRenjuRule(!renjuRule)}
+                            />
+                            렌주룰 적용
+                        </label>
+                    </div>
                 </div>
             ) : (
                 <div id="game-container">
