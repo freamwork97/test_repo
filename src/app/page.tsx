@@ -15,6 +15,7 @@ export default function Home() {
     const [statusMessage, setStatusMessage] = useState('');
     const [lastMove, setLastMove] = useState<{ row: number, col: number } | null>(null);
     const [renjuRule, setRenjuRule] = useState(true);
+    const [history, setHistory] = useState<{ board: (Player | null)[][], currentPlayer: Player, lastMove: { row: number, col: number } | null }[]>([]);
 
     useEffect(() => {
         if (gameMode) {
@@ -41,6 +42,7 @@ export default function Home() {
         setGameOver(false);
         setStatusMessage('현재 플레이어: 흑');
         setLastMove(null);
+        setHistory([]);
     };
 
     const handleCellClick = (row: number, col: number) => {
@@ -58,6 +60,9 @@ export default function Home() {
     };
 
     const placeStone = (row: number, col: number, player: Player) => {
+        const newHistory = [...history, { board, currentPlayer, lastMove }];
+        setHistory(newHistory);
+
         const newBoard = board.map(r => [...r]);
         newBoard[row][col] = player;
         setBoard(newBoard);
@@ -74,6 +79,26 @@ export default function Home() {
             setCurrentPlayer(nextPlayer);
             setStatusMessage(`현재 플레이어: ${nextPlayer === 'black' ? '흑' : '백'}`);
         }
+    };
+
+    const handleUndo = () => {
+        if (history.length === 0) return;
+
+        let lastState = history[history.length - 1];
+        let newHistory = history.slice(0, history.length - 1);
+
+        // If AI mode, undo the AI's move as well
+        if (gameMode === 'ai' && currentPlayer === 'black' && history.length > 1) {
+            lastState = history[history.length - 2];
+            newHistory = history.slice(0, history.length - 2);
+        }
+
+        setBoard(lastState.board);
+        setCurrentPlayer(lastState.currentPlayer);
+        setLastMove(lastState.lastMove);
+        setHistory(newHistory);
+        setGameOver(false);
+        setStatusMessage(`현재 플레이어: ${lastState.currentPlayer === 'black' ? '흑' : '백'}`);
     };
 
     const checkWin = (currentBoard: (Player | null)[][], row: number, col: number): boolean => {
@@ -422,6 +447,9 @@ export default function Home() {
                             ))
                         )}
                     </div>
+                    <button id="undo-button" onClick={handleUndo} disabled={history.length === 0}>
+                        무르기
+                    </button>
                     <button id="reset-button" onClick={initializeBoard}>게임 재시작</button>
                 </div>
             )}
