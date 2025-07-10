@@ -5,6 +5,7 @@ import GameBoard from '../components/GameBoard';
 import GameInfo from '../components/GameInfo';
 import ResetButton from '../components/ResetButton';
 import GameTitle from '../components/GameTitle';
+import ModeSelection from '../components/ModeSelection';
 import { useOmokGame, GameMode } from '../hooks/useOmokGame';
 
 export default function Home() {
@@ -28,21 +29,7 @@ export default function Home() {
             <GameTitle />
 
             {!gameMode ? (
-                <div id="mode-selection">
-                    <h2>게임 모드 선택</h2>
-                    <button onClick={() => startGame('ai')}>플레이어 vs AI</button>
-                    <button onClick={() => startGame('human')}>플레이어 vs 플레이어</button>
-                    <div className="rule-selection">
-                        <label>
-                            <input
-                                type="checkbox"
-                                checked={renjuRule}
-                                onChange={() => setRenjuRule(!renjuRule)}
-                            />
-                            렌주룰 적용
-                        </label>
-                    </div>
-                </div>
+                <ModeSelection startGame={startGame} renjuRule={renjuRule} setRenjuRule={setRenjuRule} />
             ) : (
                 <div id="game-container">
                     <GameInfo statusMessage={statusMessage} gameOver={gameOver} />
