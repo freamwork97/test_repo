@@ -6,6 +6,7 @@ import GameInfo from '../components/GameInfo';
 import ResetButton from '../components/ResetButton';
 import GameTitle from '../components/GameTitle';
 import ModeSelection from '../components/ModeSelection';
+import UndoButton from '../components/UndoButton';
 import { useOmokGame, GameMode } from '../hooks/useOmokGame';
 
 export default function Home() {
@@ -34,9 +35,7 @@ export default function Home() {
                 <div id="game-container">
                     <GameInfo statusMessage={statusMessage} gameOver={gameOver} />
                     <GameBoard board={board} handleCellClick={handleCellClick} lastMove={lastMove} />
-                    <button id="undo-button" onClick={handleUndo} disabled={history.length === 0}>
-                        무르기
-                    </button>
+                    <UndoButton onClick={handleUndo} disabled={history.length === 0} />
                     <ResetButton onClick={initializeBoard} />
                 </div>
             )}
