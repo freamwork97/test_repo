@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { checkWin, Player, BOARD_SIZE } from '../components/checkWin';
 import GameBoard from '../components/GameBoard';
+import GameInfo from '../components/GameInfo';
 
 
 type GameMode = 'ai' | 'human' | null;
@@ -389,9 +390,7 @@ export default function Home() {
                 </div>
             ) : (
                 <div id="game-container">
-                    <div id="status" className={gameOver ? 'game-over-message' : ''}>
-                        {statusMessage}
-                    </div>
+                    <GameInfo statusMessage={statusMessage} gameOver={gameOver} />
                     <GameBoard board={board} handleCellClick={handleCellClick} lastMove={lastMove} />
                     <button id="undo-button" onClick={handleUndo} disabled={history.length === 0}>
                         무르기
