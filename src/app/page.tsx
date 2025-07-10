@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { checkWin, Player, BOARD_SIZE } from '../components/checkWin';
 import GameBoard from '../components/GameBoard';
 import GameInfo from '../components/GameInfo';
+import ResetButton from '../components/ResetButton';
 
 
 type GameMode = 'ai' | 'human' | null;
@@ -395,7 +396,7 @@ export default function Home() {
                     <button id="undo-button" onClick={handleUndo} disabled={history.length === 0}>
                         무르기
                     </button>
-                    <button id="reset-button" onClick={initializeBoard}>게임 재시작</button>
+                    <ResetButton onClick={initializeBoard} />
                 </div>
             )}
         </main>
