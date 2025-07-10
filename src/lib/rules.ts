@@ -1,5 +1,5 @@
 
-import { Player, BOARD_SIZE } from '../components/checkWin';
+import { Player, BOARD_SIZE } from './checkWin';
 
 export const isForbiddenMove = (currentBoard: (Player | null)[][], row: number, col: number, player: Player): boolean => {
     if (player !== 'black') return false;

@@ -1,5 +1,5 @@
 
-import { Player, BOARD_SIZE, checkWin } from '../components/checkWin';
+import { Player, BOARD_SIZE, checkWin } from './checkWin';
 import { isForbiddenMove } from './rules';
 
 const findWinningMove = (currentBoard: (Player | null)[][], player: Player, renjuRule: boolean): { row: number, col: number } | null => {

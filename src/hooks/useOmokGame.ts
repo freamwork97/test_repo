@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { checkWin, Player, BOARD_SIZE } from '../components/checkWin';
+import { checkWin, Player, BOARD_SIZE } from '../lib/checkWin';
 import { makeAIMove } from '../lib/ai';
 import { isForbiddenMove } from '../lib/rules';
 

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Player, BOARD_SIZE } from './checkWin';
+import { Player, BOARD_SIZE } from '../lib/checkWin';
 import GameCell from './GameCell';
 
 interface GameBoardProps {

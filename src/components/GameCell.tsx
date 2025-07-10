@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Player } from './checkWin';
+import { Player } from '../lib/checkWin';
 
 interface GameCellProps {
   cell: Player | null;
