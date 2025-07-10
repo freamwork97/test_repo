@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { checkWin, Player, BOARD_SIZE } from '../components/checkWin';
+import GameBoard from '../components/GameBoard';
 
 
 type GameMode = 'ai' | 'human' | null;
@@ -391,17 +392,7 @@ export default function Home() {
                     <div id="status" className={gameOver ? 'game-over-message' : ''}>
                         {statusMessage}
                     </div>
-                    <div id="board" style={{ gridTemplateColumns: `repeat(${BOARD_SIZE}, 30px)` }}>
-                        {board.map((row, rowIndex) =>
-                            row.map((cell, colIndex) => (
-                                <div
-                                    key={`${rowIndex}-${colIndex}`}
-                                    className={`cell ${cell ? cell : ''} ${lastMove && lastMove.row === rowIndex && lastMove.col === colIndex ? 'last-move' : ''}`}
-                                    onClick={() => handleCellClick(rowIndex, colIndex)}
-                                />
-                            ))
-                        )}
-                    </div>
+                    <GameBoard board={board} handleCellClick={handleCellClick} lastMove={lastMove} />
                     <button id="undo-button" onClick={handleUndo} disabled={history.length === 0}>
                         무르기
                     </button>
