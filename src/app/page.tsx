@@ -5,6 +5,7 @@ import { checkWin, Player, BOARD_SIZE } from '../components/checkWin';
 import GameBoard from '../components/GameBoard';
 import GameInfo from '../components/GameInfo';
 import ResetButton from '../components/ResetButton';
+import GameTitle from '../components/GameTitle';
 
 
 type GameMode = 'ai' | 'human' | null;
@@ -371,7 +372,7 @@ export default function Home() {
 
     return (
         <main>
-            <h1>간단 오목</h1>
+            <GameTitle />
 
             {!gameMode ? (
                 <div id="mode-selection">
